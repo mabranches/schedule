@@ -1,0 +1,32 @@
+- if current_user
+  %nav.navbar.navbar-default.navbar-static-top
+    .container
+      .navbar-header
+        #navbar-body.collapse.navbar-collapse
+          %ul.nav.navbar-nav
+            - if current_user.admin?
+              %li.dropdown
+                %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"} Gerenciar Usuários
+                %ul.dropdown-menu
+                  %li
+                    %a{:href => "/users"} Listar Usuários
+                  %li
+                    %a{:href => "/users/new"} Adicionar Usuário
+            - else
+              %li.dropdown
+                %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"} Gerenciar Campos
+                %ul.dropdown-menu
+                  %li
+                    %a{:href => "/contact_structures"} Listar Campos
+                  %li
+                    %a{:href => "/contact_structures/new"} Adicionar Campo
+              %li.dropdown
+                %a.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :href => "#", :role => "button"} Gerenciar Contatos
+                %ul.dropdown-menu
+                  %li
+                    %a{:href => "/contacts"} Listar Contatos
+                  %li
+                    %a{:href => "/contacts/new"} Adicionar Contato
+            %li
+              = form_for(:session, method:'delete', url: logout_path) do |f|
+                = f.submit "Log oout", class: "btn btn-default navbar-btn"
