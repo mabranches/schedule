@@ -9,5 +9,6 @@ class CreateSchedulings < ActiveRecord::Migration[5.0]
       t.timestamps
     end
     add_index :schedulings, :day
+    add_index :schedulings, [:day, :hour], unique: true
   end
 end
