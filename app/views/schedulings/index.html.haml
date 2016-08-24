@@ -1,0 +1,12 @@
+.title Reserva de Sala
+%table#tbl-selectRoom.table.table-striped.table-bordered.tbl-selectRoom
+  %thead
+    %tr
+      %th Horário
+      %th Segunda
+      %th Terça
+      %th Quarta
+      %th Quinta
+      %th Sexta
+  %tbody
+    = ScheduleRenderer.new(@schedulings, @user).render
