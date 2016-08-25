@@ -1,36 +1,54 @@
+$(window).load(function(e) {
+  $("#tbl-selectRoom tbody td .btn.btn-success").click(schedulingClick);
+  $("#tbl-selectRoom tbody td .badge").click(cancelchedulingClick);
+});
+
   function cancelchedulingClick(ev){
     var scheduling_cell = $(this).closest('.scheduling')
-    var scheduling_id = parseInt(scheduling_cell.attr("data-scheduling-id"));
-    cancelScheduling(this, scheduling_id);
+    cancelScheduling(scheduling_cell, this);
   }
 
   function schedulingClick(ev){
     var scheduling_cell = $(this).closest('.scheduling')
-    var day = scheduling_cell.attr("data-day");
-    var hour = parseInt(scheduling_cell.attr("data-hour"));
     $(this).prop('disabled', true);
-    createScheduling({scheduling : {day: day , hour: hour} }, this);
+    createScheduling(scheduling_cell, this);
   }
 
-  function createScheduling(scheduling, btn){
-      var scheduling_cell = $(btn).closest('.scheduling')
-      scheduleRoomService(btn,'POST','schedulings', function(msg){
-        scheduling_cell.attr("data-scheduling-id",msg["scheduling-id"]);
-        scheduling_cell.append("<div class='cancel'><span class='badge'>x</span></div>");
-        scheduling_cell.append("<span class='userName'>" + $("#user-name").text().trim() + "</span>");
-        scheduling_cell.removeClass("available").addClass("busy").find("button").remove();
+  //TODO use handlebars
+  function createScheduling(scheduling_cell, btn){
+    var day = scheduling_cell.data("day");
+    var hour = scheduling_cell.data("hour");
+    var scheduling = {scheduling : {day: day , hour: hour} }
+    var userName = $("#user-name").text().trim();
+
+    scheduleRoomService(btn, 'POST', 'schedulings', function(msg){
+      var scheduling_id = msg["scheduling-id"];
+      var scheduling_div = '<div class="cancel">' +
+                              '<span  class="badge">x</span>' +
+                           '</div>' +
+                           '<span class="userName">' + userName + '</span>';
+        scheduling_cell.data("scheduling-id", scheduling_id);
+        scheduling_cell.removeClass("available").addClass("busy");
+        scheduling_cell.html(scheduling_div);
         scheduling_cell.find('.badge').click(cancelchedulingClick)
       }, scheduling);
     }
 
-    function cancelScheduling(btn,scheduling_id){
-      var scheduling_cell = $(btn).closest('.scheduling')
+    //TODO use handlebars
+    function cancelScheduling(scheduling_cell, btn){
+      var scheduling_id = scheduling_cell.data("scheduling-id");
+      var day = scheduling_cell.data("day");
+      var hour = scheduling_cell.data("hour");
       scheduleRoomService(btn,'DELETE','schedulings/' + scheduling_id, function(msg){
-        scheduling_cell.removeAttr("data-scheduling-id");
+        scheduling_div = '<div data-day="' + day  + '" data-hour="' + hour  + '" id="' +
+           day + '-' + hour + '" class="available scheduling">' +
+          '<button type="button" class="btn btn-success">' +
+            'Agendar'
+          '</button>'
+        '</div>'
+
         scheduling_cell.removeClass("busy").addClass("available");
-        scheduling_cell.find(".userName").remove();
-        scheduling_cell.append("<button type='button' class='btn btn-success'>Agendar</button>");
-        scheduling_cell.find('.cancel').remove();
+        scheduling_cell.html(scheduling_div);
         scheduling_cell.find('.btn-success').click(schedulingClick);
       });
     }
@@ -49,8 +67,3 @@
       });
     }
 
-$(window).load(function(e) {
-  $("#tbl-selectRoom tbody td .btn.btn-success").click(schedulingClick);
-  $("#tbl-selectRoom tbody td .badge").click(cancelchedulingClick);
-
-});
