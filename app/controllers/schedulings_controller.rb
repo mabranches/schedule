@@ -4,7 +4,7 @@ class SchedulingsController < ApplicationController
   def index
     monday = DateUtils.this_monday
     friday = DateUtils.this_friday
-    @schedulings = Scheduling.where(day:monday..friday)
+    @schedulings = Scheduling.includes(:user).where(day:monday..friday)
     @user = current_user
   end
 
