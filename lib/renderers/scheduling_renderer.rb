@@ -11,7 +11,7 @@ class SchedulingRenderer
       <td>
         <div data-scheduling-id="#{@scheduling.id}" data-day="#{@day}"
           data-hour="#{@hour}" id="#{@day}-#{@hour}" class="busy scheduling">
-          #{close_button if @user.id = @scheduling.user_id}
+          #{close_button if @user.id == @scheduling.user_id}
           <span class="userName">#{@scheduling.user.name}</span>
         </div>
       </td>
