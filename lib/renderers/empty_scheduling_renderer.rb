@@ -5,10 +5,13 @@ class EmptySchedulingRenderer
   end
 
   def render
-    %Q[<td data-day="#{@day}" data-hour="#{@hour}" id="#{@day}-#{@hour}" class="available">
-      <button type="button" class="btn btn-success">
-        Agendar
-      </button>
+    %Q[
+      <td>
+        <div data-day="#{@day}" data-hour="#{@hour}" id="#{@day}-#{@hour}" class="available scheduling">
+          <button type="button" class="btn btn-success">
+            Agendar
+          </button>
+        </div>
     </td>]
   end
 end
