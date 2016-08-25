@@ -1,11 +1,9 @@
 - if current_user
-  %nav.navbar.navbar-default.navbar-static-top
-    .container
+  %nav.navbar.navbar-default
+    .container-fluid
       .navbar-header
-        #navbar-body.collapse.navbar-collapse
-          %ul.nav.navbar-nav
-            %li
-              = current_user.name
-            %li
-              = form_for(:session, method:'delete', url: destroy_user_session_path) do |f|
-                = f.submit "Log oout", class: "btn btn-default navbar-btn"
+      %div.navbar-text.navbar-right  
+        = form_for(:session, method:'delete', url: destroy_user_session_path) do |f|
+          = f.submit "Logout", class: "btn btn-default navbar-btn"
+        %p.navbar-text.userName
+          = current_user.name
