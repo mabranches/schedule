@@ -1,69 +1,116 @@
-$(window).load(function(e) {
-  $("#tbl-selectRoom tbody td .btn.btn-success").click(schedulingClick);
-  $("#tbl-selectRoom tbody td .badge").click(cancelchedulingClick);
-});
+function Getter(el){
+  this.el = el;
+  this.getDay = function(){return this.el.data("day");};
+  this.getHour = function(){return this.el.data("hour");};
+  this.getUserName = function(){return $("#user-name").text().trim();};
+  this.getSchedulingId = function(){return this.el.data("scheduling-id")};
+}
 
-  function cancelchedulingClick(ev){
-    var scheduling_cell = $(this).closest('.scheduling')
-    cancelScheduling(scheduling_cell, this);
+
+function register_click_common(btn, klass, callback){
+  var schedulingCell = btn.closest('.scheduling')
+  var getter = new Getter(schedulingCell);
+  var day = getter.getDay();
+  var hour = getter.getHour();
+  var userName = getter.getUserName();
+  var schedulingId = getter.getSchedulingId();
+  callback(btn);
+  obj = new klass(schedulingCell, day, hour, userName, btn, schedulingId);
+  obj.action();
+}
+
+var EmptySchedulingEvents = {
+  click: function(){
+    register_click_common($(this), EmptyScheduling, function(btn){
+      btn.prop('disabled', true);
+    });
   }
+}
 
-  function schedulingClick(ev){
-    var scheduling_cell = $(this).closest('.scheduling')
-    $(this).prop('disabled', true);
-    createScheduling(scheduling_cell, this);
+var SchedulingEvents = {
+  click: function(){
+    register_click_common($(this), Scheduling, function(){
+    });
   }
+}
 
-  //TODO use handlebars
-  function createScheduling(scheduling_cell, btn){
-    var day = scheduling_cell.data("day");
-    var hour = scheduling_cell.data("hour");
-    var scheduling = {scheduling : {day: day , hour: hour} }
-    var userName = $("#user-name").text().trim();
+var base_url = '/schedulings'
+function EmptyScheduling(schedulingCell, day, hour, userName, btn){
+  this.schedulingCell= schedulingCell;
+  this.day = day;
+  this.hour = hour;
+  this.userName = userName;
+  this.url = base_url;
+  this.btn = btn;
+  this.method = 'POST';
 
-    scheduleRoomService(btn, 'POST', 'schedulings', function(msg){
-      var scheduling_id = msg["scheduling-id"];
-      var scheduling_div = '<div class="cancel">' +
-                              '<span  class="badge">x</span>' +
-                           '</div>' +
-                           '<span class="userName">' + userName + '</span>';
-        scheduling_cell.data("scheduling-id", scheduling_id);
-        scheduling_cell.removeClass("available").addClass("busy");
-        scheduling_cell.html(scheduling_div);
-        scheduling_cell.find('.badge').click(cancelchedulingClick)
-      }, scheduling);
-    }
+  this.build = function (){
+       scheduling_div = '<button type="button" class="btn btn-success">' +
+                           'Agendar' +
+                        '</button>'
 
-    //TODO use handlebars
-    function cancelScheduling(scheduling_cell, btn){
-      var scheduling_id = scheduling_cell.data("scheduling-id");
-      var day = scheduling_cell.data("day");
-      var hour = scheduling_cell.data("hour");
-      scheduleRoomService(btn,'DELETE','schedulings/' + scheduling_id, function(msg){
-        scheduling_div = '<div data-day="' + day  + '" data-hour="' + hour  + '" id="' +
-           day + '-' + hour + '" class="available scheduling">' +
-          '<button type="button" class="btn btn-success">' +
-            'Agendar'
-          '</button>'
-        '</div>'
+      this.schedulingCell.removeClass("busy").addClass("available");
+      this.schedulingCell.html(scheduling_div);
+      this.schedulingCell.find('.btn-success').click(EmptySchedulingEvents.click);
+  };
 
-        scheduling_cell.removeClass("busy").addClass("available");
-        scheduling_cell.html(scheduling_div);
-        scheduling_cell.find('.btn-success').click(schedulingClick);
-      });
-    }
+  this.action = function(){
+    var s = this;
+    var scheduling_data = { scheduling : {day: this.day , hour: this.hour} };
+    $.ajax({
+      type: this.method,
+      url: this.url,
+      data: scheduling_data,
+      success: function(msg){
+        var schedulingId = msg["scheduling-id"];
+        scheduling = new Scheduling(s.schedulingCell, s.day, s.hour, s.userName,
+                           s.btn, schedulingId);
+        scheduling.build();
+      },
+      error: function(msg){
+        s.btn.prop('disabled', false);
+      }
+    });
+  }
+}
 
-    function scheduleRoomService(btn, type, url, callback,scheduling){
-      $.ajax({
-        type: type,
-        url: url,
-        data: scheduling,
-        success: function(msg){
-          callback(msg);
-        },
-        error: function(msg){
-          $(btn).prop('disabled', false);
-        }
-      });
-    }
+function Scheduling(schedulingCell, day, hour, userName, btn, schedulingId) {
+  this.schedulingCell = schedulingCell;
+  this.day = day;
+  this.hour = hour;
+  this.userName = userName;
+  this.btn = btn;
+  this.id = schedulingId;
+  this.method = 'DELETE';
+  this.url = base_url + '/' +schedulingId;
 
+  this.build = function (){
+    var scheduling_div = '<div class="cancel">' +
+                            '<span  class="badge">x</span>' +
+                         '</div>' +
+                         '<span class="userName">' + this.userName + '</span>';
+    this.schedulingCell.data("scheduling-id", this.id);
+    this.schedulingCell.removeClass("available").addClass("busy");
+    this.schedulingCell.html(scheduling_div);
+    this.schedulingCell.find('.badge').click(SchedulingEvents.click)
+
+  };
+
+  this.action = function(){
+    var s = this;
+    $.ajax({
+      type: this.method,
+      url: this.url,
+      success: function(msg){
+        emptyScheduling = new EmptyScheduling(s.schedulingCell, s.day, s.hour,
+                                s.userName, s.btn);
+        emptyScheduling.build();
+      },
+      error: function(msg){
+      }
+    });
+  }
+}
+
+$("#tbl-selectRoom tbody td .btn.btn-success").click(EmptySchedulingEvents.click);
+$("#tbl-selectRoom tbody td .badge").click(SchedulingEvents.click);
