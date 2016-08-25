@@ -12,7 +12,7 @@ class SchedulingsController < ApplicationController
     @scheduling = Scheduling.new(scheduling_params)
     @scheduling.user = current_user
     if @scheduling.save
-      render json: {message: 'Scheduling was successfully created.'}
+      render json: {'scheduling-id':@scheduling.id ,message: 'Scheduling was successfully created.'}
     else
       errors = build_model_errors(@scheduling)
       render_error(errors, :unprocessable_entity)
