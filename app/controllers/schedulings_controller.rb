@@ -27,9 +27,10 @@ class SchedulingsController < ApplicationController
     @scheduling = Scheduling.new(scheduling_params)
 
     if @scheduling.save
-      redirect_to @scheduling, notice: 'Scheduling was successfully created.'
+      render json: {message: 'Scheduling was successfully created.'}
     else
-      render :new
+      errors = build_model_errors(@Scheduling)
+      render_error(errors, :unprocessable_entity)
     end
   end
 
@@ -44,8 +45,14 @@ class SchedulingsController < ApplicationController
 
   # DELETE /schedulings/1
   def destroy
-    @scheduling.destroy
-    redirect_to schedulings_url, notice: 'Scheduling was successfully destroyed.'
+    if (current_user.id == @scheduling.user_id) && @scheduling.destroy
+      render json: {message: 'Scheduling was successfully destroyed.'}
+    else
+      errors = build_model_errors(@Scheduling)
+      errprs << {title:'user', message:'current user is not owner.'} if
+        current_user.id != scheduling.user_id
+      render_error(errors, :unprocessable_entity)
+    end
   end
 
   private
