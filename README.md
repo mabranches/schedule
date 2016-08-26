@@ -39,7 +39,9 @@ You can also create a new user by accessing [/users/sign_up](https://schedule-aj
   There are 2 main classes
   * Scheduling
   * EmptyScheduling
+  
   Both classes have 2 methods
+
   * action - Execute action of each class
     * Scheduling 
       * send request to cancel the current scheduling
