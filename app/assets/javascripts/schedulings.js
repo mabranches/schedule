@@ -42,9 +42,11 @@ function EmptyScheduling(schedulingCell, day, hour, userName, btn){
   this.userName = userName;
   this.url = base_url;
   this.btn = btn;
-  this.method = 'POST';
+};
 
-  this.build = function (){
+EmptyScheduling.prototype = {
+  method: 'POST' ,
+  build: function (){
        scheduling_div = '<button type="button" class="btn btn-success">' +
                            'Agendar' +
                         '</button>'
@@ -52,9 +54,9 @@ function EmptyScheduling(schedulingCell, day, hour, userName, btn){
       this.schedulingCell.removeClass("busy").addClass("available");
       this.schedulingCell.html(scheduling_div);
       this.schedulingCell.find('.btn-success').click(EmptySchedulingEvents.click);
-  };
+  },
 
-  this.action = function(){
+  action: function(){
     var s = this;
     var scheduling_data = { scheduling : {day: this.day , hour: this.hour} };
     $.ajax({
@@ -81,10 +83,12 @@ function Scheduling(schedulingCell, day, hour, userName, btn, schedulingId) {
   this.userName = userName;
   this.btn = btn;
   this.id = schedulingId;
-  this.method = 'DELETE';
   this.url = base_url + '/' +schedulingId;
+};
 
-  this.build = function (){
+Scheduling.prototype = {
+  method: 'DELETE' ,
+  build: function (){
     var scheduling_div = '<div class="cancel">' +
                             '<span  class="badge">x</span>' +
                          '</div>' +
@@ -94,9 +98,9 @@ function Scheduling(schedulingCell, day, hour, userName, btn, schedulingId) {
     this.schedulingCell.html(scheduling_div);
     this.schedulingCell.find('.badge').click(SchedulingEvents.click)
 
-  };
+  },
 
-  this.action = function(){
+  action: function(){
     var s = this;
     $.ajax({
       type: this.method,
