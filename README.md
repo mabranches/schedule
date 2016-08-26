@@ -18,7 +18,15 @@ You can also create a new user by accessing [/users/sign_up](https://schedule-aj
   Any user can create a new scheduling by clicking the **Agendar** button.
 ##### Canceling a scheduling
   You can cancel a scheduling by clicking the **X** button.
-  Users can cancel only their own schedulings 
+  Users can cancel only their own schedulings
+### Setup
+```shell
+bundle install
+```
+### Tests
+```
+  bundle exec rspec
+```
 ### Code
 ##### Databases
   The **schedulings** table has the following schema
