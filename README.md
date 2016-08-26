@@ -1,7 +1,7 @@
 # Schedule
 
 ###Heroku
-This [app](https://schedule-ajax.herokuapp.com) was depolyed in heroku
+This [app](https://schedule-ajax.herokuapp.com) was deployed in heroku
 ##### User
 There are 3 created users that can be accessed with the emails:
   * users1@email.com
@@ -18,7 +18,7 @@ You can also create a new user by accessing [/users/sign_up](https://schedule-aj
   Any user can create a new scheduling by clicking the **Agendar** button.
 ##### Canceling a scheduling
   You can cancel a scheduling by clicking the **X** button.
-  Users can cancel only their own schedulings
+  Users can cancel only their own schedulings 
 ### Code
 ##### Databases
   The **schedulings** table has the following schema
@@ -32,8 +32,8 @@ You can also create a new user by accessing [/users/sign_up](https://schedule-aj
   The controllers and models are very simples.
   in **/lib/renderes** there are classes to be used in view.
   * ScheduleRenderer - Main class responsible to render all scheduling in a table
-  * SchedulingRenderer - Rende a unique scheduling
-  * EmptySchedulingRenderer - Render an avaible timeframe
+  * SchedulingRenderer - Render a unique scheduling
+  * EmptySchedulingRenderer - Render an available time-frame
   
 ##### Javascript
   There are 2 main classes
