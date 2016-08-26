@@ -24,8 +24,8 @@ class SchedulingsController < ApplicationController
       render json: {message: 'Scheduling was successfully destroyed.'}
     else
       errors = build_model_errors(@scheduling)
-      errprs << {title:'user', message:'current user is not owner.'} if
-        current_user.id != scheduling.user_id
+      errors << {title:'user', message:'current user is not owner.'} if
+        current_user.id != @scheduling.user_id
       render_error(errors, :unprocessable_entity)
     end
   end
