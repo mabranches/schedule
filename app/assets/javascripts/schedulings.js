@@ -1,11 +1,14 @@
 function Getter(el){
   this.el = el;
-  this.getDay = function(){return this.el.data("day");};
-  this.getHour = function(){return this.el.data("hour");};
-  this.getUserName = function(){return $("#user-name").text().trim();};
-  this.getSchedulingId = function(){return this.el.data("scheduling-id")};
 }
 
+Getter.prototype = {
+  getDay: function(){return this.el.data("day");},
+  getHour: function(){return this.el.data("hour");},
+  getUserName: function(){return $("#user-name").text().trim();},
+  getUserId: function(){return $("#user-id").text().trim();},
+  getSchedulingId: function(){return this.el.data("scheduling-id")}
+}
 
 function register_click_common(btn, klass, callback){
   var schedulingCell = btn.closest('.scheduling')
@@ -22,7 +25,7 @@ function register_click_common(btn, klass, callback){
 var EmptySchedulingEvents = {
   click: function(){
     register_click_common($(this), EmptyScheduling, function(btn){
-      btn.prop('disabled', true);
+      //btn.prop('disabled', true);
     });
   }
 }
@@ -118,3 +121,43 @@ Scheduling.prototype = {
 
 $("#tbl-selectRoom tbody td .btn.btn-success").click(EmptySchedulingEvents.click);
 $("#tbl-selectRoom tbody td .badge").click(SchedulingEvents.click);
+
+function same_user(data){
+   userId = $("#user-id").text().trim();
+   return data['user']['id'] == userId
+}
+
+function receive_common(data, receive_function){
+  if (same_user(data))
+    return;
+  debugger;
+  receive_function();
+  return
+}
+
+CreateChannel.messages = CreateChannel.cable.
+  subscriptions.create('CreatedSchedulingChannel', {
+  received: function(data) {
+    receive_common(data, function(){
+      schdedulingCellId = '#' + data['scheduling']['day'] +
+                            '-' +data['scheduling']['hour'];
+      schedulingCell = $(schdedulingCellId);
+      schedulingCell.html("<span class='userName'>" +
+                            data['user']['name'] + "</span>");
+    });
+  }
+});
+
+CancelChannel.messages = CancelChannel.cable.
+  subscriptions.create('CanceledSchedulingChannel', {
+  received: function(data) {
+    debugger;
+    receive_common(data, function(){
+      schdedulingCellId = '#' + data['scheduling']['day'] +
+                            '-' +data['scheduling']['hour'];
+      schedulingCell = $(schdedulingCellId);
+      emptyScheduling = new EmptyScheduling(schedulingCell);
+      emptyScheduling.build();
+    })
+  }
+});

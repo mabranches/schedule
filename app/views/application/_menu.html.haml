@@ -5,5 +5,7 @@
       %div.navbar-text.navbar-right
         = form_for(:session, method:'delete', url: destroy_user_session_path) do |f|
           = f.submit "Log Out", class: "btn btn-default navbar-btn"
-        %p#user-name.navbar-text.userName
+        #user-name.navbar-text.userName
           = current_user.name
+        #user-id.navbar-text.hidden.userName
+          = current_user.id

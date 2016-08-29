@@ -1,6 +1,6 @@
 module DateUtils
   def self.this_monday
-    Date.today.beginning_of_week
+    Time.zone.today.beginning_of_week
   end
 
   def self.this_friday
