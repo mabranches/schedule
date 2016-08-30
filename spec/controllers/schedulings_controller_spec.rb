@@ -15,7 +15,9 @@ RSpec.describe SchedulingsController, type: :controller do
 
   describe "GET #index" do
     before do
-      allow(Date).to receive(:today){Date.parse('2016-08-24')}
+      zone = Time.zone
+      allow(zone).to receive(:today){  Date.parse('2016-08-24') }
+      allow(Time).to receive(:zone){ zone }
       monday =  Date.parse('2016-08-22')
       friday =  Date.parse('2016-08-26')
       10.times do
@@ -28,6 +30,7 @@ RSpec.describe SchedulingsController, type: :controller do
       end
       sign_in @user
     end
+
     it 'should render all schedulings' do
       #expect {get :index}.to make_database_queries(count: 3)
       get :index
