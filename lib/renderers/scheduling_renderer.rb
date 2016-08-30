@@ -1,4 +1,5 @@
 class SchedulingRenderer
+  include ActionView::Helpers::TagHelper
   def initialize(scheduling, user, day, hour)
     @scheduling = scheduling
     @user = user
@@ -7,21 +8,22 @@ class SchedulingRenderer
   end
 
   def render
-    %Q[
-      <td>
-        <div data-scheduling-id="#{@scheduling.id}" data-day="#{@day}"
-          data-hour="#{@hour}" id="#{@day}-#{@hour}" class="busy scheduling">
-          #{close_button if @user.id == @scheduling.user_id}
-          <span class="userName">#{@scheduling.user.name}</span>
-        </div>
-      </td>
-    ]
+    name_html = content_tag(:span, @scheduling.user.name, class:'userName')
+    icon_html = ( @user.id == @scheduling.user_id ) ? close_button : ''
+    content_html = content_tag(
+                                 :div, icon_html + name_html,
+                                 'data-scheduling-id': @scheduling.id,
+                                 'data-day': @day, 'data-hour': @hour,
+                                 id: "#{@day}-#{@hour}",
+                                 class: 'busy scheduling'
+                              )
+
+    content_tag(:td, content_html)
   end
 
   private
     def close_button
-      '<div class="cancel">
-        <span  class="badge">x</span>
-       </div>'
+      icon_html = content_tag(:span, 'x', class:'badge')
+      cancel_html = content_tag(:div, icon_html, class: 'cancel')
     end
 end
