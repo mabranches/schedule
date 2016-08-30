@@ -8,11 +8,11 @@ class Scheduling < ApplicationRecord
 
 
   def send_created_message
-    SchedulingRelayJob.create_message(self)
+    SchedulingRelayJob.perform_now('created_scheduling', self)
   end
 
   def send_canceled_message
-    SchedulingRelayJob.cancel_message(self)
+    SchedulingRelayJob.perform_now('canceled_scheduling', self)
   end
 
 end

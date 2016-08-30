@@ -1,17 +1,15 @@
 class SchedulingRelayJob < ApplicationJob
-  def self.create_message(scheduling)
-    ActionCable.server.broadcast "created_scheduling",
-      {
-        user: { id: scheduling.user.id, name: scheduling.user.name },
-        scheduling:{ id: scheduling.id, day: scheduling.day, hour: scheduling.hour }
-      }
+
+  def perform(channel, scheduling)
+    send_msg_aux(channel, scheduling)
   end
 
-  def self.cancel_message(scheduling)
-    ActionCable.server.broadcast "canceled_scheduling",
-      {
-        user: { id: scheduling.user.id, name: scheduling.user.name },
-        scheduling:{ id: scheduling.id, day: scheduling.day, hour: scheduling.hour }
-      }
-  end
+  private
+
+    def send_msg_aux(channel, scheduling)
+      exceptions = [:created_at, :updated_at, :lock_version, :user_id]
+
+      ActionCable.server.broadcast channel,
+        scheduling.as_json(include: [user: {except: exceptions}], except: exceptions)
+    end
 end
