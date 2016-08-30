@@ -60,7 +60,7 @@ EmptyScheduling.prototype = {
   },
 
   action: function(){
-    var s = this;
+    var self = this;
     var scheduling_data = { scheduling : {day: this.day , hour: this.hour} };
     $.ajax({
       type: this.method,
@@ -68,8 +68,8 @@ EmptyScheduling.prototype = {
       data: scheduling_data,
       success: function(msg){
         var schedulingId = msg["scheduling-id"];
-        scheduling = new Scheduling(s.schedulingCell, s.day, s.hour, s.userName,
-                           s.btn, schedulingId);
+        scheduling = new Scheduling(self.schedulingCell, self.day, self.hour,
+                           self.userName, self.btn, schedulingId);
         scheduling.build();
       },
       error: function(msg){
@@ -104,13 +104,13 @@ Scheduling.prototype = {
   },
 
   action: function(){
-    var s = this;
+    var self = this;
     $.ajax({
       type: this.method,
       url: this.url,
       success: function(msg){
-        emptyScheduling = new EmptyScheduling(s.schedulingCell, s.day, s.hour,
-                                s.userName, s.btn);
+        emptyScheduling = new EmptyScheduling(self.schedulingCell, self.day, self.hour,
+                           self.userName, self.btn, schedulingId);
         emptyScheduling.build();
       },
       error: function(msg){
