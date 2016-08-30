@@ -25,7 +25,7 @@ function register_click_common(btn, klass, callback){
 var EmptySchedulingEvents = {
   click: function(){
     register_click_common($(this), EmptyScheduling, function(btn){
-      //btn.prop('disabled', true);
+      btn.prop('disabled', true);
     });
   }
 }
@@ -130,7 +130,6 @@ function same_user(data){
 function receive_common(data, receive_function){
   if (same_user(data))
     return;
-  debugger;
   receive_function();
   return
 }
@@ -151,7 +150,6 @@ CreateChannel.messages = CreateChannel.cable.
 CancelChannel.messages = CancelChannel.cable.
   subscriptions.create('CanceledSchedulingChannel', {
   received: function(data) {
-    debugger;
     receive_common(data, function(){
       schdedulingCellId = '#' + data['scheduling']['day'] +
                             '-' +data['scheduling']['hour'];
